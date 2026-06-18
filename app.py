@@ -110,7 +110,7 @@ def orion_shield():
         f"   🛡️ O.R.I.O.N. MULTI-SHIELD 🛡️\n\n"
         f"• Numéro cible : "{phone_number}"\n"
         f"• Statut de menace : {score.upper()}\n"
-        f"• Analyse : *\"{top_comment}\"*"
+        f"• Analyse : \"{top_comment}\""
     )
     
     return jsonify({"verdict": "Analyse Terminée", "details": details})
