@@ -58,7 +58,7 @@ def scan_url():
         details = f"VirusTotal: {vt_result['detec']} alerte(s). \nCheckLink: {cl_result['raison']}"
     else:
         verdict = "🟢 SÛR 🟢"
-        details = "Aucune menace détectée sur les deux plateformes."
+        details = "O.R.I.O.N n'a détecté aucune anomalie."
         
     return jsonify({
         "verdict": verdict,
