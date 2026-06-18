@@ -37,10 +37,10 @@ def scan_url():
     cl_result = check_checklink(url_to_scan)
 
     if vt_result["status"] == "danger" or cl_result["status"] == "danger":
-        verdict = "⚠️ MENACE DÉTECTÉE"
-        details = f"\n\nLe système O.R.I.O.N a détecté un risque.\nRaison : {cl_result['raison']}"
+        verdict = "                   ⚠️ MENACE ⚠️"
+        details = f"\n\nLe système O.R.I.O.N a détecté : {vt_result['detec']} alerte(s). {cl_result['raison']}"
     else:
-        verdict = "✅ SÉCURISÉ"
+        verdict = "                  ✅ SÉCURISÉ ✅"
         details = "\n\nLe système O.R.I.O.N n'a rien détecté de suspect."
 
     return jsonify({
