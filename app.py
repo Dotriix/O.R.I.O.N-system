@@ -54,10 +54,10 @@ def scan_url():
     
     # Fusion des résultats
     if vt_result["status"] == "danger" or cl_result["status"] == "danger":
-        verdict = "⚠️ DANGER ⚠️"
+        verdict = "⚠️ MENACE ⚠️"
         details = f"O.R.I.O.N a détecté : {vt_result['detec']} alerte(s). {cl_result['raison']}"
     else:
-        verdict = "✅ SÉCURISÉ ✅"
+        verdict = "✅ SÛR ✅"
         details = "O.R.I.O.N n'a détecté aucune anomalie."
         
     return jsonify({
