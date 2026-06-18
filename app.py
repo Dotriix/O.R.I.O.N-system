@@ -67,4 +67,82 @@ def scan_url():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+    
+# Bloqueur d'appels 
+import re
+import requests
+from bs4 import BeautifulSoup
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+def verifier_bloc_arcep(numero):
+    """
+    Simule la logique de Saracroche en vérifiant les préfixes 
+    officiellement dédiés au démarchage en France (Arcep).
+    """
+    num_clean = re.sub(r'\s+|\+33', '', numero)
+    if num_clean.startswith('0'):
+        num_clean = num_clean[1:]
+        
+    # Liste des préfixes officiels du démarchage (0162, 0163, 0270, 0948, etc.)
+    prefixes_spam = [
+        "162", "163", "270", "271", "377", "378", "424", "425", 
+        "568", "569", "948", "949", "947"
+    ]
+    
+    for prefixe in prefixes_spam:
+        if num_clean.startswith(prefixe):
+            return True, "Plage de numéros officiellement réservée au Démarchage (Base ARCEP)"
+    return False, None
+
+def analyser_annuaires(numero):
+    num_clean = re.sub(r'\s+|\+33', '', numero)
+    if num_clean.startswith('0'):
+        num_clean = num_clean[1:]
+        
+    url = f"https://www.doisjecrecrocher.fr/numero/0{num_clean}"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=5)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            eval_tag = soup.find('div', class_='number-rating')
+            score = eval_tag.text.strip() if eval_tag else "Inconnu"
+            
+            comments = soup.find_all('div', class_='comment-content')
+            comment_text = comments[0].text.strip() if comments else "Aucun commentaire."
+            return score, comment_text
+    except:
+        pass
+    return "Inconnu", "Aucune donnée disponible."
+
+@app.route('/orion_shield', methods=['POST'])
+def orion_shield():
+    data = request.get_json() or {}
+    phone_number = data.get('phone', '')
+    
+    if not phone_number:
+        return jsonify({"verdict": "Erreur", "details": "Aucun numéro détecté."}), 400
+        
+    # 1. Analyse style Saracroche (ARCEP)
+    est_un_demarcheur, motif = verifier_bloc_arcep(phone_number)
+    
+    if est_un_demarcheur:
+        score = "DANGEREUX"
+        top_comment = motif
+    else:
+        # 2. Si ce n'est pas dans les blocs ARCEP, on interroge l'annuaire de masse
+        score, top_comment = analyser_annuaires(phone_number)
+    
+    # Rendu final pour l'action "Afficher le contenu" de l'iPhone
+    details = (
+        f"   🛡️ **O.R.I.O.N. MULTI-SHIELD** 🛡️\n\n"
+        f"• **Cible :** `{phone_number}`\n"
+        f"• **Statut de menace :** **{score.upper()}**\n"
+        f"• **Analyse :** *\"{top_comment}\"*"
+    )
+    
+    return jsonify({"verdict": "Analyse Terminée", "details": details})
 
