@@ -55,7 +55,7 @@ def scan_url():
     # Fusion des résultats
     if vt_result["status"] == "danger" or cl_result["status"] == "danger":
         verdict = "🔴 DANGER 🔴"
-        details = f"VirusTotal : {vt_result['detec']} alerte(s). \nCheckLink: {cl_result['raison']}"
+        details = f"O.R.I.O.N a détecté : {vt_result['detec']} alerte(s). \nCheckLink: {cl_result['raison']}"
     else:
         verdict = "🟢 SÛR 🟢"
         details = "O.R.I.O.N n'a détecté aucune anomalie."
