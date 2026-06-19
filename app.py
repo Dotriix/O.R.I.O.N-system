@@ -75,7 +75,7 @@ def scan_url():
         
         # On personnalise le message
         if vt["status"] == "danger" and cl["status"] == "danger":
-            details = f"Attention : Ce lien est identifié comme dangereux par nos analyses locales et par les experts de VirusTotal ({vt['detec']} alertes)."
+            details = f"Attention : Ce lien est identifié comme dangereux selon le système de protection O.R.I.O.N ({vt['detec']} alertes)."
         elif vt["status"] == "danger":
             details = f"Ce lien est signalé comme malveillant par {vt['detec']} outils de sécurité mondiaux (VirusTotal)."
         else:
