@@ -28,7 +28,7 @@ def check_checklink(url_to_scan):
 @app.route('/scan', methods=['POST'])
 def scan_url():
     data = request.get_json() or {}
-    url_to_scan = data.get("url")
+    url_to_scan = data.get("url", "")
 
     if not url_to_scan:
         return jsonify({"verdict": "Erreur", "details": "Pas d'URL reçue"}), 400
@@ -36,9 +36,17 @@ def scan_url():
     vt_result = check_virus_total(url_to_scan)
     cl_result = check_checklink(url_to_scan)
 
-    if vt_result["status"] == "danger" or cl_result["status"] == "danger":
+    # CALCUL DU NOMBRE D'ALERTES RÉEL
+    nb_alertes = 0
+    if vt_result["status"] == "danger": nb_alertes += vt_result['detec']
+    
+    # Si le mot-clé est trouvé, on ajoute 1 alerte pour l'hameçonnage
+    if cl_result["status"] == "danger": nb_alertes += 1
+
+    if nb_alertes > 0 or cl_result["status"] == "danger":
         verdict = "                   ⚠️ MENACE ⚠️"
-        details = f"\n\nLe système O.R.I.O.N a détecté : {vt_result['detec']} alerte(s). {cl_result['raison']}"
+        # On affiche nb_alertes calculé et la raison
+        details = f"\n\nLe système O.R.I.O.N a détecté : {nb_alertes} alerte(s). {cl_result['raison']}"
     else:
         verdict = "                  ✅ SÉCURISÉ ✅"
         details = "\n\nCe lien a été vérifié avec succès et ne présente aucun risque."
@@ -47,6 +55,7 @@ def scan_url():
         "verdict": verdict,
         "details": details
     })
+
 
 
 # =====================================================================
