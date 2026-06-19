@@ -56,17 +56,29 @@ def scan_url():
     cl_result = check_checklink(url_to_scan)
 
     nb_alertes = 0
-    if vt_result["status"] == "danger": nb_alertes += vt_result['detec']
-    if cl_result["status"] == "danger": nb_alertes += 1
+    if vt_result["status"] == "danger": 
+        nb_alertes += vt_result['detec']
+    if cl_result["status"] == "danger": 
+        nb_alertes += 1
 
+    # On vérifie si une menace est détectée par l'un des deux outils
     if nb_alertes > 0 or cl_result["status"] == "danger":
+        # Sécurité : s'assurer d'afficher au moins 1 menace si le statut est danger
+        total_menaces = max(1, nb_alertes)
+        
         verdict = "                   ⚠️ MENACE ⚠️"
-        details = f"\n\nLe système O.R.I.O.N a détecté : {nb_alertes} alerte(s). {cl_result['raison']}"
+        
+        # Gestion propre et dynamique du français selon le nombre de menaces
+        if total_menaces == 1:
+            details = f"\n\nLe système O.R.I.O.N a détecté 1 menace. {cl_result['raison']}"
+        else:
+            details = f"\n\nLe système O.R.I.O.N a détecté {total_menaces} menaces. {cl_result['raison']}"
     else:
         verdict = "                  ✅ SÉCURISÉ ✅"
         details = "\n\nCe lien a été vérifié avec succès et ne présente aucun risque."
 
     return jsonify({"verdict": verdict, "details": details})
+
 
 
 # =====================================================================
