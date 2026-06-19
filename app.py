@@ -21,17 +21,21 @@ def check_virus_total(url_to_scan):
 def check_checklink(url_to_scan):
     domaine_whitelist = ["amazon.fr", "amazon.com", "ameli.fr", "caf.fr", "gouv.fr", "impots.gouv.fr"]
     
-    # 1. Extraction et vérification IMMÉDIATE du domaine
+        # 1. Extraction et vérification du domaine avec nettoyage
     try:
         parsed_url = urlparse(url_to_scan)
-        domaine = parsed_url.netloc.lower()
+        # On enlève "www." pour ne pas fausser la comparaison
+        domaine = parsed_url.netloc.lower().replace("www.", "")
         
-        # Si le domaine est en liste blanche, on renvoie "safe" tout de suite
+        # DEBUG : Affiche dans tes logs Render ce qu'il voit réellement
+        print(f"DEBUG: Domaine nettoyé = '{domaine}'")
+        
+        # Vérification stricte contre la liste blanche
         for site in domaine_whitelist:
             if domaine == site or domaine.endswith("." + site):
                 return {"status": "safe", "raison": "Domaine de confiance reconnu."}
     except:
-        pass # Si l'URL est mal formée, on continue vers l'analyse de mots-clés
+        pass 
 
     # 2. Analyse des mots-clés (uniquement si le domaine n'était PAS de confiance)
     mots_cles_arnaque = ["facturation", "prime", "amende", "vinted", "colis", "urssaf", "caf", "ameli", "infraction"]
