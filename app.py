@@ -71,7 +71,7 @@ def scan_url():
     
     # Correction de l'indentation ici (tout doit être bien aligné)
     if vt["status"] == "danger" or cl["status"] == "danger":
-        verdict = "⚠️ ALERTE DE SÉCURITÉ ⚠️"
+        verdict =        "⚠️ LIEN SUSPECT ⚠️"
         
         # On personnalise le message
         if vt["status"] == "danger" and cl["status"] == "danger":
